@@ -3,7 +3,8 @@ import json
 import httplib
 import urllib2
 import requests
-
+import dateutil.parser
+import datetime
 
 #Retrieving my token from API
 url = 'http://challenge.code2040.org/api/register'
@@ -67,3 +68,25 @@ stage3_result_url = 'http://challenge.code2040.org/api/validateprefix'
 stage3_result_dict = {'token' : token, 'array' : array}
 req7 = requests.post(stage3_result_url, data = None, json = stage3_result_dict)
 print(req7.text)
+
+#Beginning stage 4
+stage4_url = 'http://challenge.code2040.org/api/time'
+stage4_dict = {'token' : token}
+req8 = requests.post(stage4_url, data = None, json = stage4_dict)
+req8_json = req8.json()
+#the actual JSON dictionary is the value of the first key
+req8_dict = req8_json.values()[0]
+#according to my terminal, datestamp is the first key and interval is the second
+datestamp = req8_dict.values()[0]
+interval = req8_dict.values()[1]
+#convert ISO 8601 time to datetime object to use timedelta
+date = dateutil.parser.parse(datestamp)
+new_date = date + datetime.timedelta(seconds = interval)
+#convert datetime object back to ISO 8601
+new_date = new_date.isoformat()
+
+#Posting stage 4 results
+stage4_result_url = 'http://challenge.code2040.org/api/validatetime'
+stage4_result_dict = {'token' : token, 'datestamp' : new_date}
+req9 = requests.post(stage4_result_url, data = None, json = stage4_result_dict)
+print(req9.text)
