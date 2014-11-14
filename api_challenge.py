@@ -46,3 +46,24 @@ stage2_url_result = 'http://challenge.code2040.org/api/validateneedle'
 stage2_result_dict = {'token' : token, 'needle' : index_sol}
 req4 = requests.post(stage2_url_result, data = None, json = stage2_result_dict)
 print(req4.text)#check stage 2 result
+
+#Beginning stage 3
+stage3_url = 'http://challenge.code2040.org/api/prefix'
+stage3_dict = {'token' : token}
+req6 = requests.post(stage3_url, data = None, json = stage3_dict)
+req6_json = req6.json()
+#the actual JSON dictionary is the value of the first key
+req6_dict = req6_json.values()[0]
+#according to my terminal output array is the first key, prefix is the second
+array = req6_dict.values()[0]
+prefix = req6_dict.values()[1]
+#now to iterate through the strings in array and check if they start with prefix. If so, remove string
+for str in array:
+	if str.startswith(prefix):
+		array.remove(str)
+
+#Posting stage 3 results
+stage3_result_url = 'http://challenge.code2040.org/api/validateprefix'
+stage3_result_dict = {'token' : token, 'array' : array}
+req7 = requests.post(stage3_result_url, data = None, json = stage3_result_dict)
+print(req7.text)
